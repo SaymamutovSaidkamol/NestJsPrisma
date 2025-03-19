@@ -126,4 +126,20 @@ export class UsersService {
 
     return { data: del };
   }
+
+  async delSession(id: string, req: Request) {
+    let checkIp = await this.prisma.iP.findFirst({ where: { id } });
+
+    if (!checkIp) {
+      throw new NotFoundException('IP Not Found');
+    }
+
+    if (checkIp.userId !== req['user'].id) {
+      throw new BadRequestException();
+    }
+
+    let del = await this.prisma.iP.delete({ where: { id } });
+
+    return { del };
+  }
 }
